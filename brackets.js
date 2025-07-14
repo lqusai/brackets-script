@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- 'NEXT ROUND' LOGIC ---
   $('#next-round-button').on('click', function() {
-    // Scope all jQuery selections to inside our specific bracket container
     var $bracketContainer = $('.prediction-tabs'); 
     var $currentRoundPane = $bracketContainer.find('.w-tab-pane.w--tab-active');
     
@@ -44,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var requiredWinners = roundRequirements[currentRoundNumber];
     var actualWinners = $currentRoundPane.find('.list-group-item.is-winner');
     
+    // This is the mandatory selection check
     if (actualWinners.length < requiredWinners) {
       alert('Please select a winner for every matchup in this round.');
       return;
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
       slot.attr('data-id', winner.attr('data-id'));
     });
 
-    // UPDATED: This now specifically finds the tab menu inside '.prediction-tabs'
     var $tablinks = $bracketContainer.find('.w-tab-menu');
     var currentIndex = $tablinks.find('.w--current').index();
     var nextIndex = currentIndex + 1;
@@ -83,13 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var $bracketContainer = $('.prediction-tabs');
     var $currentRoundPane = $bracketContainer.find('.w-tab-pane.w--tab-active');
     var roundContainer = $currentRoundPane.closest('[data-round]');
-    if (!roundContainer.length) return; // Exit if data-round isn't found
+    if (!roundContainer.length) return;
     
     var currentRoundNumber = roundContainer.attr('data-round');
     var requiredWinners = roundRequirements[currentRoundNumber];
     var selectedCount = $currentRoundPane.find('.list-group-item.is-winner').length;
     
-    // Scoped to the specific progress bar
     $bracketContainer.find('#progress-text').text(selectedCount + '/' + requiredWinners);
     $bracketContainer.find('#progress-bar').css('width', (selectedCount / requiredWinners) * 100 + '%');
   }
