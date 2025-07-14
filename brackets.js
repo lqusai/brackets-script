@@ -6,8 +6,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const nextRoundButton = document.getElementById('next-round-button');
 
   if (!bracketContainer || !nextRoundButton) {
-    console.error("Error: Could not find essential elements (.prediction-tabs or #next-round-button).");
     return;
+  }
+
+  // --- A simpler function to update the progress bar UI ---
+  function updateProgressBarUI(currentSelections, requiredSelections) {
+    const textElement = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress-bar');
+    
+    if (requiredSelections && textElement && progressBar) {
+      textElement.textContent = currentSelections + '/' + requiredSelections;
+      progressBar.style.width = (currentSelections / requiredWinners) * 100 + '%';
+    }
+  }
+
+  // --- The main function to calculate progress ---
+  function calculateAndUpdateProgress() {
+    const tabMenu = bracketContainer.querySelector('.w-tab-menu');
+    const currentTabLink = tabMenu.querySelector('.w--current');
+    if (!currentTabLink) return;
+
+    const allTabLinks = Array.from(tabMenu.querySelectorAll('.w-tab-link'));
+    const currentIndex = allTabLinks.indexOf(currentTabLink);
+    const currentRoundNumber = currentIndex + 1;
+    
+    const currentRoundPane = bracketContainer.querySelector('.w-tab-pane.w--tab-active');
+    const requiredWinners = roundRequirements[currentRoundNumber];
+    const selectedCount = currentRoundPane.querySelectorAll('.list-group-item.is-winner').length;
+    
+    // Call the simple UI function with the calculated numbers
+    updateProgressBarUI(selectedCount, requiredWinners);
   }
 
   // --- SELECTION LOGIC ---
@@ -30,8 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
       parentMatchup.classList.remove('has-selection');
     }
     
-    // UPDATED: A tiny delay ensures Webflow's scripts run first.
-    setTimeout(updateProgress, 10);
+    // A tiny delay to let Webflow catch up before we calculate progress
+    setTimeout(calculateAndUpdateProgress, 50);
   });
 
   // --- 'NEXT ROUND' LOGIC ---
@@ -71,41 +99,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextTabLink) {
       nextTabLink.click();
       
-      const progressBar = document.getElementById('progress-bar');
-      const textElement = document.getElementById('progress-text');
-      if (progressBar) progressBar.style.width = '0%';
-      if (textElement) textElement.textContent = '';
-      
-      setTimeout(updateProgress, 150);
+      // A delay to allow the tab transition to complete before updating the progress bar for the new round.
+      setTimeout(calculateAndUpdateProgress, 150);
 
     } else {
       alert('Bracket Complete!');
     }
   });
-
-  // --- PROGRESS BAR FUNCTION ---
-  function updateProgress() {
-    const tabMenu = bracketContainer.querySelector('.w-tab-menu');
-    const currentTabLink = tabMenu.querySelector('.w--current');
-    if (!currentTabLink) return;
-
-    const allTabLinks = Array.from(tabMenu.querySelectorAll('.w-tab-link'));
-    const currentIndex = allTabLinks.indexOf(currentTabLink);
-    const currentRoundNumber = currentIndex + 1;
-    
-    const currentRoundPane = bracketContainer.querySelector('.w-tab-pane.w--tab-active');
-    const requiredWinners = roundRequirements[currentRoundNumber];
-    const selectedCount = currentRoundPane.querySelectorAll('.list-group-item.is-winner').length;
-    
-    const textElement = document.getElementById('progress-text');
-    const progressBar = document.getElementById('progress-bar');
-    
-    if (requiredWinners && textElement && progressBar) {
-      textElement.textContent = selectedCount + '/' + requiredWinners;
-      progressBar.style.width = (selectedCount / requiredWinners) * 100 + '%';
-    }
-  }
   
-  // Initialize progress bar for the first round
-  updateProgress();
+  // Initialize progress bar for the first round on page load
+  setTimeout(calculateAndUpdateProgress, 100); // Initial delay for safety
 });
