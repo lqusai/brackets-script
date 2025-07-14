@@ -1,3 +1,4 @@
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   
   // --- CONFIGURATION ---
@@ -68,23 +69,4 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // --- PROGRESS BAR FUNCTION (CORRECTED) ---
-  function updateProgress() {
-    var $bracketContainer = $('.prediction-tabs');
-    var $tablinks = $bracketContainer.find('.w-tab-menu');
-    var currentIndex = $tablinks.find('.w--current').index();
-    var currentRoundNumber = currentIndex + 1;
-
-    var $currentRoundPane = $bracketContainer.find('.w-tab-pane.w--tab-active');
-    var requiredWinners = roundRequirements[currentRoundNumber];
-    var selectedCount = $currentRoundPane.find('.list-group-item.is-winner').length;
-    
-    if (requiredWinners) {
-        // UPDATED: These selectors now search the whole document, not just inside the tabs.
-        $('#progress-text').text(selectedCount + '/' + requiredWinners);
-        $('.white-bar-progress').css('width', (selectedCount / requiredWinners) * 100 + '%');
-    }
-  }
-  
-  // Initialize progress bar when the page loads
-  updateProgress();
-});
+  function updateProgress
