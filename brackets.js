@@ -69,11 +69,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextTabLink = allTabLinks[currentIndex + 1];
     if (nextTabLink) {
       nextTabLink.click();
+      
+      // UPDATED: Reset the progress bar immediately, then wait for the animation to finish before updating.
+      const progressBar = document.getElementById('progress-bar');
+      const textElement = document.getElementById('progress-text');
+      if (progressBar) progressBar.style.width = '0%'; // Instantly reset to 0
+      if (textElement) textElement.textContent = ''; // Clear text
+      
+      setTimeout(function() {
+        updateProgress();
+      }, 150); // A 150ms delay to allow the tab transition to complete.
+
     } else {
       alert('Bracket Complete!');
     }
-    
-    updateProgress();
   });
 
   // --- PROGRESS BAR FUNCTION ---
@@ -99,5 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Initialize progress bar for the first round
   updateProgress();
 });
