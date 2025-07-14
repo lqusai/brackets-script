@@ -79,11 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var selectedCount = $currentRoundPane.find('.list-group-item.is-winner').length;
     
     if (requiredWinners) {
-        // This targets the text counter (e.g., 8/16)
-        $bracketContainer.find('#progress-text').text(selectedCount + '/' + requiredWinners);
-        
-        // UPDATED: This now targets your progress bar by its class name
-        $bracketContainer.find('.white-bar-progress').css('width', (selectedCount / requiredWinners) * 100 + '%');
+        // UPDATED: These selectors now search the whole document, not just inside the tabs.
+        $('#progress-text').text(selectedCount + '/' + requiredWinners);
+        $('.white-bar-progress').css('width', (selectedCount / requiredWinners) * 100 + '%');
     }
   }
   
